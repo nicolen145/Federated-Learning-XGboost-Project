@@ -151,22 +151,30 @@ IMPORTANT:
 
 Step 1 - Generate Server Certificates (Server Machine)  
 Run `generate_server_cert.ps1`
+
 Update the server IP address in `certificate.conf` before running
 
 Step 2 - Generate Authentication Keys  
 Run `generate_auth_keys.sh`  
+
 Manually distribute the generated keys to the server and client machines
 
 Step 3 - Start the Server (Windows)  
 Run `start_superlink.ps1`  
+
 Ensure ClearML is configured on the server
 
 Step 4 - Approve Client Connections  
 Run `approve_supernodes.ps1` on the server machine
 
 Step 5 - Start Clients  
-Run `run_supernodes.sh <client id>` on each client machine  
+Run `run_supernodes.sh <client id>` on each client machine 
+
 Each client runs using its local dataset only
+
+Step 6 - Start the federated learning process
+
+Once all clients are connected and approved, start the federated learning process from the server by running: `flwr run . remote-federation`
 
 After the run completes, open the ClearML UI and inspect the experiment results,
 metrics, and saved artifacts.
