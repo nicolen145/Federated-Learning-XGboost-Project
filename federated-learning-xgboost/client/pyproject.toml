@@ -1,0 +1,76 @@
+# =====================================================================
+# For a full TOML configuration guide, check the Flower docs:
+# https://flower.ai/docs/framework/how-to-configure-pyproject-toml.html
+# =====================================================================
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "my-app-xgboost"
+version = "1.0.0"
+description = ""
+license = "Apache-2.0"
+# Dependencies for your Flower App
+dependencies = [
+    "flwr[simulation]>=1.23.0",
+    "xgboost>=2.0.0",
+    "scikit-learn",
+    "numpy",
+    "pandas",
+    "matplotlib",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.flwr.app]
+publisher = "nicole"
+
+[tool.flwr.app.components]
+serverapp = "my_app_xgboost.server_app:app"
+clientapp = "my_app_xgboost.client_app:app"
+
+# [tool.flwr.app.components]
+# serverapp = "my_app_xgboost.server_app_catboost:app"
+# clientapp = "my_app_xgboost.client_app_catboost:app"
+
+
+# Custom config values accessible via `context.run_config`
+[tool.flwr.app.config]
+num-server-rounds = 8
+fraction-train = 1.0
+fraction-evaluate = 1.0
+local-epochs = 10
+
+
+# XGBoost parameters
+params.objective = "binary:logistic"
+params.eval-metric = "auc"
+params.eta = 0.08
+params.max-depth = 4
+params.min-child-weight = 2
+params.subsample = 0.8
+params.colsample-bytree = 0.8
+params.tree-method = "hist"
+params.seed = 42
+params.gamma = 0.1
+params.lambda = 2.0
+params.max_delta_step = 1
+params.scale_pos_weight = 1.2
+
+
+
+
+# Default federation to use when running the app
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 3
+
+# Remote federation example for use with SuperLink
+[tool.flwr.federations.remote-federation]
+address = "10.160.8.2:9193"
+root-certificates = "certificates/ca.crt"
