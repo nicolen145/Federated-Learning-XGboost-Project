@@ -1,4 +1,4 @@
-# Federated Learning with XGBoost – Internship Project
+# Federated Learning with XGBoost - Internship Project
 
 This project implements a secure Federated Learning (FL) pipeline using Flower and XGBoost.
 It simulates a real-world distributed environment with a central server and multiple clients
@@ -11,15 +11,18 @@ federated learning approaches.
 ---
 
 PROJECT STRUCTURE
-
+```text
 FEDERATED-LEARNING-XGBOOST/
 |
 |-- client/
 |   |-- certificates/                 TLS certificates used by the client (generated locally, not tracked)
 |   |-- keys/                         Client authentication keys (generated locally, not tracked)
 |   |-- my-app-xgboost/
-|   |   |-- datasets/                 Local dataset used by the client machine
-|   |   |   |-- client0_20.csv        Example client dataset (subset of the full data)
+|   |   |-- datasets/                 
+|   |   |   |-- client0_20.csv        Local dataset used by the client 1
+|   |   |   |-- client1_10.csv        Local dataset used by the client 2
+|   |   |   |-- client2_70.csv        Local dataset used by the client 3
+|   |   |   |-- diabetes_binary_5050split_health_indicators_BRFSS2015.csv     full dataset
 |   |   |-- __init__.py               Marks the directory as a Python package
 |   |   |-- client_app.py             Flower client implementation
 |   |   |-- task.py                   Data loading, preprocessing, and XGBoost training logic
@@ -43,7 +46,7 @@ FEDERATED-LEARNING-XGBOOST/
 |   |-- start_superlink.ps1           Starts the Flower SuperLink server on Windows
 |
 |-- .gitignore                         Excludes certificates, keys, and sensitive artifacts
-
+```
 ---
 
 DATASET DESCRIPTION
@@ -86,7 +89,7 @@ CLEARML INTEGRATION
 The server component is integrated with ClearML for experiment tracking and logging.
 
 - All training metrics, logs, and artifacts are sent from the server to ClearML
-- ClearML must be configured **on the server machine**
+- ClearML must be configured on the server machine
 - Client machines do not interact directly with ClearML
 
 ---
@@ -104,7 +107,7 @@ PREREQUISITES
 
 CONFIGURATION NOTES (SERVER IP)
 
-Before running the system, the server IP address must be updated **manually** in all of
+Before running the system, the server IP address must be updated manually in all of
 the following locations:
 
 1) certificate.conf  
@@ -120,7 +123,7 @@ the following locations:
 
 CERTIFICATE AND KEY MANAGEMENT
 
-TLS Certificates are generated on the **server machine** using `generate_server_cert.ps1`.
+TLS Certificates are generated on the server machine using `generate_server_cert.ps1`.
 
 After running this script, the following files are created in `server/certificates/`:
 - server.key          (server private key – pre-existing or reused)
@@ -136,12 +139,12 @@ After running this script, the following files are created:
 - Client public authentication keys (one per client)
 
 Manual distribution is required:
-- Client **private keys** ( must be copied manually to `client/keys/` on the corresponding client machine
-- Client **public keys** (*.pub) must be copied manually to `server/keys/` on the server machine
-- Each client machine must contain a copy of the ca.crt file in its certificates directory in order to verify the server’s TLS certificate.
+- Client private keys ( must be copied manually to `client/keys/` on the corresponding client machine
+- Client public keys (*.pub) must be copied manually to `server/keys/` on the server machine
+- Each client machine must contain a copy of the `ca.crt` file in its certificates directory in order to verify the server’s TLS certificate.
 
 IMPORTANT:
-- This distribution step is **manual and not automated**
+- This distribution step is manual and not automated
 - None of the generated certificates or keys are included in the repository
 - All certificate and key files are excluded via `.gitignore`
 
@@ -150,22 +153,22 @@ IMPORTANT:
 HOW TO RUN THE PROJECT
 
 Step 1 - Generate Server Certificates (Server Machine)  
-Run generate_server_cert.ps1  
-Update the server IP address in certificate.conf before running
+Run `generate_server_cert.ps1`
+Update the server IP address in `certificate.conf` before running
 
 Step 2 - Generate Authentication Keys  
-Run generate_auth_keys.sh  
+Run `generate_auth_keys.sh`  
 Manually distribute the generated keys to the server and client machines
 
 Step 3 - Start the Server (Windows)  
-Run start_superlink.ps1  
+Run `start_superlink.ps1`  
 Ensure ClearML is configured on the server
 
 Step 4 - Approve Client Connections  
-Run approve_supernodes.ps1 on the server machine
+Run `approve_supernodes.ps1` on the server machine
 
 Step 5 - Start Clients  
-Run run_supernodes.sh on each client machine  
+Run `run_supernodes.sh <client id>` on each client machine  
 Each client runs using its local dataset only
 
 After the run completes, open the ClearML UI and inspect the experiment results,
